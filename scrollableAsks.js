@@ -7,8 +7,7 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
   const [updateTime, setUpdateTime] = useState()
   const [cursorIndex, setCursorIndex] = useState(0)
   const [scrollTop, setScrollTop] = useState(0)
-
-  const dataLength = 100
+  const [dataLength, setDataLength] = useState(0)
 
   useEffect(() => {
     setRawMode(true)
@@ -45,10 +44,14 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
         setUpdateTime(Date.now())
       }
     }
-  }, [cursorIndex, scrollTop])
+  }, [cursorIndex, scrollTop, dataLength])
 
   return (
-    <Asks height={height} scrollTop={scrollTop} cursorIndex={cursorIndex} />
+    <Asks
+      height={height}
+      scrollTop={scrollTop}
+      cursorIndex={cursorIndex}
+      onDataLength={setDataLength} />
   )
 }
 
