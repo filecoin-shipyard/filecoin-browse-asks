@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
+import Asks from './asks'
 
 function ScrollableAsks ({ height, stdin, setRawMode }) {
   const [updateTime, setUpdateTime] = useState()
@@ -46,20 +47,8 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
     }
   }, [cursorIndex, scrollTop])
 
-  const rows = []
-  for (let i = 0; i < dataLength; i++) {
-    if (i >= scrollTop && i < scrollTop + height) {
-      const pointer = (i === cursorIndex) ? figures.pointer : ' '
-      rows.push(
-        <Box>{pointer} Row {i + 1} of {dataLength}{' '}
-        </Box>
-      )
-    }
-  }
   return (
-    <Box flexDirection="column">
-      {rows}
-    </Box>
+    <Asks height={height} scrollTop={scrollTop} cursorIndex={cursorIndex} />
   )
 }
 
