@@ -2,36 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
 
-function Scrollable ({ height, stdin, setRawMode, render }) {
+function Scrollable ({ height, render, onCursorScrollHandler }) {
   const [updateTime, setUpdateTime] = useState()
   const [cursorIndex, setCursorIndex] = useState(0)
   const [scrollTop, setScrollTop] = useState(0)
   const [dataLength, setDataLength] = useState(0)
 
   useEffect(() => {
-    setRawMode(true)
-    stdin.on('data', handler)
-    return () => stdin.removeListener('data', handler)
+    onCursorScrollHandler({ setCursorAndScroll })
 
-    function handler (data) {
-      if (data === '\u001b[A') {
-        setCursorAndScroll(cursorIndex - 1)
-      }
-      if (data === '\u001b[B') {
-        setCursorAndScroll(cursorIndex + 1)
-      }
-      if (data === '\u001b[D') {
-        data = 'left'
-      }
-      if (data === '\u001b[C') {
-        data = 'right'
-      }
-      if (data === '\r') {
-        data = 'return'
-      }
-    }
-
-    function setCursorAndScroll (newCursorIndex) {
+    function setCursorAndScroll (offset) {
+      const newCursorIndex = cursorIndex + offset
       if (newCursorIndex >= 0 && newCursorIndex <= dataLength - 1) {
         setCursorIndex(newCursorIndex)
         if (newCursorIndex < scrollTop) {
@@ -43,23 +24,63 @@ function Scrollable ({ height, stdin, setRawMode, render }) {
         setUpdateTime(Date.now())
       }
     }
-  }, [cursorIndex, scrollTop, dataLength])
+  }, [height, scrollTop, cursorIndex, dataLength])
 
-  const onDataLength = setDataLength 
-  return render({ height, scrollTop, cursorIndex, onDataLength })
+  return render({ height, scrollTop, cursorIndex, onDataLength: setDataLength })
+}
+
+function ScrollKeys ({ height, stdin, setRawMode, updateCursorAndScroll }) {
+  useEffect(() => {
+    setRawMode(true)
+    stdin.on('data', handler)
+    return () => stdin.removeListener('data', handler)
+
+    function handler (data) {
+      if (data === '\u001b[A') {
+        updateCursorAndScroll(-1)
+      }
+      if (data === '\u001b[B') {
+        updateCursorAndScroll(+1)
+      }
+      /*
+      if (data === '\u001b[D') {
+        data = 'left'
+      }
+      if (data === '\u001b[C') {
+        data = 'right'
+      }
+      if (data === '\r') {
+        data = 'return'
+      }
+      */
+    }
+  }, [updateCursorAndScroll])
+
+  return null
 }
 
 export default function ScrollableWithStdin ({ height, render }) {
+  const [cursorScrollHandler, setCursorScrollHandler] = useState()
   return (
-    <StdinContext.Consumer>
-      {({stdin, setRawMode}) => (
-        <Scrollable
-          height={height}
-          render={render}
-          stdin={stdin}
-          setRawMode={setRawMode} />
-      )}
-    </StdinContext.Consumer>
+    <>
+      <Scrollable
+        height={height}
+        render={render}
+        onCursorScrollHandler={setCursorScrollHandler} />
+      <StdinContext.Consumer>
+        {
+          ({stdin, setRawMode}) => (
+            <ScrollKeys
+              stdin={stdin}
+              setRawMode={setRawMode}
+              updateCursorAndScroll={
+                cursorScrollHandler ? cursorScrollHandler.setCursorAndScroll :
+                  () => {}
+              } />
+          )
+        }
+      </StdinContext.Consumer>
+    </>
   )
 }
 
