@@ -2,7 +2,7 @@
 
 import meow from 'meow'
 import React, { useState, useEffect } from 'react'
-import { render, Box } from 'ink'
+import { render, Box, Color } from 'ink'
 import useFilecoinConfig from './useFilecoinConfig'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
@@ -73,7 +73,7 @@ const Main = () => {
     <Box flexDirection="column" width={columns} height={rows - 1}>
       <Box>
         <Box flexGrow={1}>
-          Filecoin Browse Asks
+          <Color green>Filecoin Browse Asks</Color>
         </Box>
         <Box>
           {asks && `${asks.length} asks`}

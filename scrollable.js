@@ -44,17 +44,15 @@ function Scrollable ({ height, render, onCursorScrollHandler, dataLength }) {
   if (scrollTop > 0) {
     const linesAbove = `${scrollTop}`
     topBorder = topBorder.slice(0,1) +
-      figures.arrowUp +
-      linesAbove +
-      topBorder.slice(2 + linesAbove.length)
+      (figures.arrowUp + linesAbove).padStart(4, '-') +
+      topBorder.slice(5)
   }
   let bottomBorder = '-'.repeat(columns)
   if (scrollTop + contentHeight < dataLength) {
     const linesBelow = `${dataLength - contentHeight - scrollTop}`
     bottomBorder = bottomBorder.slice(0,1) +
-      figures.arrowDown +
-      linesBelow +
-      bottomBorder.slice(2 + linesBelow.length)
+      (figures.arrowDown + linesBelow).padStart(4, '-') +
+      bottomBorder.slice(5)
   }
 
   return (
