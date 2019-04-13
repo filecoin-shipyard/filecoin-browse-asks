@@ -7,7 +7,8 @@ import useFilecoinConfig from './useFilecoinConfig'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
 import InkWatchForExitKey from './inkWatchForExitKey'
-import ScrollableAsks from './scrollableAsks'
+import Scrollable from './scrollable'
+import Asks from './asks'
 
 const cli = meow(
   `
@@ -136,7 +137,15 @@ const Main = () => {
     </Box>
     : null
 
-  const content = <ScrollableAsks height={rows - 6} />
+  const content = <Scrollable height={rows - 6} render={
+    ({ height, scrollTop, cursorIndex, onDataLength }) => {
+      return <Asks
+        height={height}
+        scrollTop={scrollTop}
+        cursorIndex={cursorIndex}
+        onDataLength={onDataLength} />
+    }
+  } />
 
   return (
     <Box flexDirection="column" width={columns} height={rows - 1}>

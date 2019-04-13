@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
-import Asks from './asks'
 
-function ScrollableAsks ({ height, stdin, setRawMode }) {
+function Scrollable ({ height, stdin, setRawMode, render }) {
   const [updateTime, setUpdateTime] = useState()
   const [cursorIndex, setCursorIndex] = useState(0)
   const [scrollTop, setScrollTop] = useState(0)
@@ -46,21 +45,17 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
     }
   }, [cursorIndex, scrollTop, dataLength])
 
-  return (
-    <Asks
-      height={height}
-      scrollTop={scrollTop}
-      cursorIndex={cursorIndex}
-      onDataLength={setDataLength} />
-  )
+  const onDataLength = setDataLength 
+  return render({ height, scrollTop, cursorIndex, onDataLength })
 }
 
-export default function ScrollableAsksWithStdin ({ height }) {
+export default function ScrollableWithStdin ({ height, render }) {
   return (
     <StdinContext.Consumer>
       {({stdin, setRawMode}) => (
-        <ScrollableAsks
+        <Scrollable
           height={height}
+          render={render}
           stdin={stdin}
           setRawMode={setRawMode} />
       )}
