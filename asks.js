@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
+import BigNumber from 'bignumber.js'
+import useFilecoinAsks from './useFilecoinAsks'
 
 export default function Asks ({
   height,
@@ -8,19 +10,23 @@ export default function Asks ({
   cursorIndex,
   onDataLength
 }) {
-  const dataLength = 100
+  const [asks] = useFilecoinAsks()
 
-  useEffect(() => onDataLength(dataLength), true)
+  useEffect(() => onDataLength(asks ? asks.length : 0), [asks])
 
   const rows = []
-  for (let i = 0; i < dataLength; i++) {
-    if (i >= scrollTop && i < scrollTop + height) {
-      const pointer = (i === cursorIndex) ? figures.pointer : ' '
-      rows.push(
-        <Box>
-          {pointer} Row {i + 1} of {dataLength}{' '}
-        </Box>
-      )
+  if (asks) {
+    const sortedAsks = asks.sort((a, b) => BigNumber(a.price).comparedTo(b.price))
+    for (let i = 0; i < sortedAsks.length; i++) {
+      if (i >= scrollTop && i < scrollTop + height) {
+        const ask = sortedAsks[i]
+        const pointer = (i === cursorIndex) ? figures.pointer : ' '
+        rows.push(
+          <Box>
+            {pointer} Row {i + 1} of {asks.length}{' '}{JSON.stringify(ask)}
+          </Box>
+        )
+      }
     }
   }
   return <>{rows}</>
