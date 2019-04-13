@@ -2,7 +2,7 @@
 
 import meow from 'meow'
 import React, { useState, useEffect } from 'react'
-import { render, Box, Text } from 'ink'
+import { render, Box } from 'ink'
 import useFilecoinConfig from './useFilecoinConfig'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
@@ -14,109 +14,27 @@ import Asks from './asks'
 const cli = meow(
   `
     Usage
-      $ filecoin-big-head [options]
-
-    Options
-      -color <color1,...>
-      -c <color1,...>
-
-        Colors:
-          cyan cyanBright black red redBright green greenBright
-          yellow yellowBright blue blueBright magenta magentaBright
-          white whiteBright gray
-          #ff8800 (any valid hex color)
-          #f80 (short form is supported as well)
-          candy
-
-      -font <name>
-      -f <name>
-
-        Fonts: (from dominikwilkowski/cfonts)
-          huge block simple simpleBlock 3d simple3d chrome
-
-      -flash-duration <seconds>     (default: 2.5)
-      -flash-color <color1,color2>
-
-      -interval <seconds>           (default: 5)
-      -i <seconds>
-
-        Interval to poll local filecoin node
-
-      -net-interval <seconds>       (default: 30)
-
-        Interval to poll devnet block explorer API
-
-      --no-nickname
-      --no-seconds
-      --no-net-info
+      $ filecoin-browse-asks [options]
   `,
   {
     flags: {
-      color: {
-        type: 'string',
-        alias: 'c',
-        default: 'cyan'
-      },
-      font: {
-        type: 'string',
-        alias: 'f',
-        default: 'huge'
-      },
-      flashDuration: {
-        type: 'string',
-        alias: 'fd',
-        default: '2.5'
-      },
-      flashColor: {
-        type: 'string',
-        alias: 'fc',
-        default: 'yellow'
-      },
-      interval: {
-        type: 'string',
-        alias: 'i',
-        default: '5'
-      },
-      netInterval: {
-        type: 'string',
-        alias: 'i',
-        default: '30'
-      },
-      nickname: {
-        type: 'boolean',
-        default: true
-      },
-      seconds: {
-        type: 'boolean',
-        default: true
-      },
-      netInfo: {
-        type: 'boolean',
-        default: true
-      }
     }
   }
 )
 
 const args = cli.flags
-const colors = args.color.split(',')
-if (!colors[1]) colors[1] = colors[0]
-const flashColors = args.flashColor.split(',')
-if (!flashColors[1]) flashColors[1] = colors[1]
-const flashDuration = Number(args.flashDuration) * 1000 
-const interval = Number(args.interval) * 1000 
-const netInterval = Number(args.netInterval) * 1000 
 
 const Main = () => {
   const [nickname] = useFilecoinConfig('heartbeat.nickname')
   const [, height, updateTime] = useFilecoinHead({
-    interval,
-    flashDuration
+    interval: 5000
   })
   const [netName, , netHeight] = useFilecoinNetworkInfo({
-    interval: netInterval
+    interval: 30000
   })
-  const [asks] = useFilecoinAsks()
+  const [unfilteredAsks] = useFilecoinAsks()
+  const asks = unfilteredAsks ?
+    unfilteredAsks.filter(ask => ask.expiry > height) : []
 
   const { columns, rows } = process.stdout
 
@@ -124,31 +42,32 @@ const Main = () => {
     return <Box>Loading...</Box>
   }
 
-  const displayColors = (Date.now() < updateTime + flashDuration) ?
-    flashColors : colors
-
-  const seconds = args.seconds ?
+  const seconds = (
     <Box>
       ({Math.floor((Date.now() - updateTime) / 1000)}s ago)
     </Box>
-    : null
+  )
 
-  const netInfo = args.netInfo ?
+  const netInfo = (
     <Box>
       {netName}: {netHeight >= 0 ? netHeight : 'Loading...'}
     </Box>
-    : null
+  )
 
-  const content = <Scrollable height={rows - 4} render={
-    ({ height, scrollTop, cursorIndex, onDataLength }) => {
-      return <Asks
-        asks={asks}
-        height={height}
-        scrollTop={scrollTop}
-        cursorIndex={cursorIndex}
-        onDataLength={onDataLength} />
-    }
-  } />
+  const content = <Scrollable
+    height={rows - 3}
+    dataLength={asks ? asks.length : 0}
+    render={
+      ({ height, scrollTop, cursorIndex }) => {
+        return (
+          <Asks
+            asks={asks}
+            height={height}
+            scrollTop={scrollTop}
+            cursorIndex={cursorIndex} />
+        )
+      }
+    } />
 
   return (
     <Box flexDirection="column" width={columns} height={rows - 1}>
@@ -160,13 +79,10 @@ const Main = () => {
           {asks && `${asks.length} asks`}
         </Box>
       </Box>
-      <Box>
-        <Text underline>S</Text>ort Order: Low to High (Press 'S' to Change)
-      </Box>
       {content}
       <Box>
         <Box>
-          {args.nickname && nickname && nickname + ' '}
+          {nickname && nickname + ' '}
         </Box>
         <Box flexGrow={1}>
           {height} {seconds}

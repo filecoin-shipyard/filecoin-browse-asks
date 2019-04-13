@@ -8,7 +8,7 @@
     "prepublish": "npm run build"
   },
   "bin": {
-    "filecoin-big-head": "dist/index.js"
+    "filecoin-browse-asks": "dist/index.js"
   },
   "keywords": [],
   "author": "Jim Pick (@jimpick)",

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
 
-function Scrollable ({ height, render, onCursorScrollHandler }) {
+function Scrollable ({ height, render, onCursorScrollHandler, dataLength }) {
   const [updateTime, setUpdateTime] = useState()
   const [cursorIndex, setCursorIndex] = useState(0)
   const [scrollTop, setScrollTop] = useState(0)
-  const [dataLength, setDataLength] = useState(0)
 
   const contentHeight = height - 2
   const { columns } = process.stdout
@@ -36,8 +35,12 @@ function Scrollable ({ height, render, onCursorScrollHandler }) {
     }
   }
 
-  const border = '-'.repeat(columns)
-  let topBorder = border
+  let topBorder = '-'.repeat(6) +
+    'Miner'.padEnd(42, '-') +
+    'ID'.padEnd(3, '-') +
+    'Price'.padEnd(23, '-') +
+    'Expiry'
+  topBorder += '-'.repeat(Math.max(columns - topBorder.length, 0))
   if (scrollTop > 0) {
     const linesAbove = `${scrollTop}`
     topBorder = topBorder.slice(0,1) +
@@ -45,7 +48,7 @@ function Scrollable ({ height, render, onCursorScrollHandler }) {
       linesAbove +
       topBorder.slice(2 + linesAbove.length)
   }
-  let bottomBorder = border
+  let bottomBorder = '-'.repeat(columns)
   if (scrollTop + contentHeight < dataLength) {
     const linesBelow = `${dataLength - contentHeight - scrollTop}`
     bottomBorder = bottomBorder.slice(0,1) +
@@ -55,18 +58,17 @@ function Scrollable ({ height, render, onCursorScrollHandler }) {
   }
 
   return (
-    <Box flexDirection="column" textWrap="truncate">
-      <Box>{topBorder}</Box>
+    <Box flexDirection="column">
+      <Box textWrap="truncate">{topBorder}</Box>
       {
         render({
           height: contentHeight,
           scrollTop,
-          cursorIndex,
-          onDataLength: setDataLength
+          cursorIndex
         })
       }
       {paddingRows}
-      <Box>{bottomBorder}</Box>
+      <Box textWrap="truncate">{bottomBorder}</Box>
     </Box>
   )
 }
@@ -101,13 +103,14 @@ function ScrollKeys ({ height, stdin, setRawMode, updateCursorAndScroll }) {
   return null
 }
 
-export default function ScrollableWithStdin ({ height, render }) {
+export default function ScrollableWithStdin ({ height, render, dataLength }) {
   const [cursorScrollHandler, setCursorScrollHandler] = useState()
   return (
     <>
       <Scrollable
         height={height}
         render={render}
+        dataLength={dataLength}
         onCursorScrollHandler={setCursorScrollHandler} />
       <StdinContext.Consumer>
         {
