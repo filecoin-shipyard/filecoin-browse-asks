@@ -10,23 +10,32 @@ function Scrollable ({ height, render, onCursorScrollHandler, dataLength }) {
   const contentHeight = height - 2
   const { columns } = process.stdout
 
+  const loading = !(typeof dataLength === 'number')
+
   useEffect(() => {
     onCursorScrollHandler({ setCursorAndScroll })
 
     function setCursorAndScroll (offset) {
-      const newCursorIndex = cursorIndex + offset
-      if (newCursorIndex >= 0 && newCursorIndex <= dataLength - 1) {
-        setCursorIndex(newCursorIndex)
-        if (newCursorIndex < scrollTop) {
-          setScrollTop(newCursorIndex)
+      if (!loading) {
+        const newCursorIndex = cursorIndex + offset
+        if (newCursorIndex >= 0 && newCursorIndex <= dataLength - 1) {
+          setCursorIndex(newCursorIndex)
+          if (newCursorIndex < scrollTop) {
+            setScrollTop(newCursorIndex)
+          }
+          if (newCursorIndex > scrollTop + contentHeight - 1) {
+            setScrollTop(newCursorIndex - contentHeight + 1)
+          }
+          setUpdateTime(Date.now())
         }
-        if (newCursorIndex > scrollTop + contentHeight - 1) {
-          setScrollTop(newCursorIndex - contentHeight + 1)
-        }
-        setUpdateTime(Date.now())
       }
     }
   }, [height, scrollTop, cursorIndex, dataLength])
+
+  if (loading) {
+    dataLength = 1
+    render = () => <Box>Loading...</Box>
+  }
 
   const paddingRows = []
   if (dataLength < contentHeight) {

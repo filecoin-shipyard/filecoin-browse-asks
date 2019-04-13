@@ -33,8 +33,8 @@ const Main = () => {
     interval: 30000
   })
   const [unfilteredAsks] = useFilecoinAsks()
-  const asks = unfilteredAsks ?
-    unfilteredAsks.filter(ask => ask.expiry > height) : []
+  const asks = unfilteredAsks &&
+    unfilteredAsks.filter(ask => ask.expiry > height)
 
   const { columns, rows } = process.stdout
 
@@ -56,7 +56,7 @@ const Main = () => {
 
   const content = <Scrollable
     height={rows - 3}
-    dataLength={asks ? asks.length : 0}
+    dataLength={asks && asks.length}
     render={
       ({ height, scrollTop, cursorIndex }) => {
         return (
