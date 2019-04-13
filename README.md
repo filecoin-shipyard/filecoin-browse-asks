@@ -1,7 +1,7 @@
 filecoin-browse-asks
 ====================
 
-A simple command line tool to view the availabe filecoin asks
+A simple command line tool to view the availabe Filecoin asks
 on the network.
 
 ![Demo GIF](filecoin-browse-asks.gif)

@@ -1,7 +1,7 @@
 {
   "name": "filecoin-browse-asks",
   "version": "0.0.5",
-  "description": "Scroll through filecoin asks in your terminal",
+  "description": "Scroll through Filecoin asks in your terminal",
   "scripts": {
     "dev": "nodemon --ignore dist --exec babel-node index.js",
     "build": "babel *.js --out-dir dist",
