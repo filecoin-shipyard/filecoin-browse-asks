@@ -22,7 +22,7 @@ export default function Asks ({
         const ask = sortedAsks[i]
         const pointer = (i === cursorIndex) ? figures.pointer : ' '
         rows.push(
-          <Box>
+          <Box textWrap="truncate">
             {pointer} Row {i + 1} of {asks.length}{' '}{JSON.stringify(ask)}
           </Box>
         )

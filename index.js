@@ -137,7 +137,7 @@ const Main = () => {
     </Box>
     : null
 
-  const content = <Scrollable height={rows - 6} render={
+  const content = <Scrollable height={rows - 4} render={
     ({ height, scrollTop, cursorIndex, onDataLength }) => {
       return <Asks
         height={height}
@@ -153,15 +153,9 @@ const Main = () => {
         Filecoin Browse Asks
       </Box>
       <Box>
-      <Text underline>S</Text>ort Order: Low to High (Press 'S' to Change)
-      </Box>
-      <Box textWrap="truncate">
-      {'-'.repeat(columns)}
+        <Text underline>S</Text>ort Order: Low to High (Press 'S' to Change)
       </Box>
       {content}
-      <Box textWrap="truncate">
-      {'-'.repeat(columns)}
-      </Box>
       <Box>
         <Box>
           {args.nickname && nickname && nickname + ' '}
