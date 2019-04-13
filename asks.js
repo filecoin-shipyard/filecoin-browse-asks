@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Box, Color } from 'ink'
 import figures from 'figures'
 import BigNumber from 'bignumber.js'
@@ -9,9 +9,12 @@ export default function Asks ({
   cursorIndex,
   asks
 }) {
+  const sortedAsks = useMemo(
+    () => (asks && asks.sort((a, b) => BigNumber(a.price).comparedTo(b.price))),
+    [asks]
+  )
   const rows = []
   if (asks) {
-    const sortedAsks = asks.sort((a, b) => BigNumber(a.price).comparedTo(b.price))
     for (let i = 0; i < sortedAsks.length; i++) {
       if (i >= scrollTop && i < scrollTop + height) {
         const ask = sortedAsks[i]
