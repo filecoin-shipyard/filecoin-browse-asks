@@ -8,26 +8,21 @@ export default function Asks ({
   cursorIndex,
   onDataLength
 }) {
-  const dataLength = 50
+  const dataLength = 100
 
-  useEffect(() => {
-    onDataLength(dataLength)
-  }, true)
+  useEffect(() => onDataLength(dataLength), true)
 
   const rows = []
   for (let i = 0; i < dataLength; i++) {
     if (i >= scrollTop && i < scrollTop + height) {
       const pointer = (i === cursorIndex) ? figures.pointer : ' '
       rows.push(
-        <Box>{pointer} Row {i + 1} of {dataLength}{' '}
+        <Box>
+          {pointer} Row {i + 1} of {dataLength}{' '}
         </Box>
       )
     }
   }
-  return (
-    <Box flexDirection="column">
-      {rows}
-    </Box>
-  )
+  return <>{rows}</>
 }
 

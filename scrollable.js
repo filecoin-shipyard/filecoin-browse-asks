@@ -26,7 +26,19 @@ function Scrollable ({ height, render, onCursorScrollHandler }) {
     }
   }, [height, scrollTop, cursorIndex, dataLength])
 
-  return render({ height, scrollTop, cursorIndex, onDataLength: setDataLength })
+  const paddingRows = []
+  if (dataLength < height) {
+    for (let i = 0; i < height - dataLength; i++) {
+      paddingRows.push(<Box> </Box>)
+    }
+  }
+  return (
+    <Box flexDirection="column">
+      {render({ height, scrollTop, cursorIndex, onDataLength: setDataLength })}
+      {paddingRows}
+    </Box>
+  )
+
 }
 
 function ScrollKeys ({ height, stdin, setRawMode, updateCursorAndScroll }) {
