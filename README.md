@@ -4,6 +4,8 @@ filecoin-browse-asks
 A simple command line tool to view the availabe filecoin asks
 on the network.
 
+![Demo GIF](filecoin-browse-asks.gif)
+
 # Install
 
 ```

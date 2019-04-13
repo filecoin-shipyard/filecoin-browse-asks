@@ -17,7 +17,7 @@ export default function Asks ({
         const ask = sortedAsks[i]
         const pointer = (i === cursorIndex) ? figures.pointer : ' '
         rows.push(
-          <Box textWrap="truncate">
+          <Box textWrap="truncate" key={i}>
             {pointer}{' '}
             <Color cyan>{`${i + 1}`.padStart(3)}</Color>{' '}
             <Color blue>{ask.miner}</Color>{' '}
