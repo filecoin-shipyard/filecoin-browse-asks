@@ -2,15 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
 
-const globalState = {
-  lastKey: null
-}
-
 function ScrollableAsks ({ height, stdin, setRawMode }) {
   const [updateTime, setUpdateTime] = useState()
   const [cursorIndex, setCursorIndex] = useState(0)
+  const [scrollTop, setScrollTop] = useState(0)
 
-  const state = { cursorIndex }
+  const dataLength = 100
 
   useEffect(() => {
     setRawMode(true)
@@ -19,16 +16,10 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
 
     function handler (data) {
       if (data === '\u001b[A') {
-        data = 'up'
-        if (state.cursorIndex > 0) {
-          setCursorIndex(state.cursorIndex - 1)
-        }
+        setCursorAndScroll(cursorIndex - 1)
       }
       if (data === '\u001b[B') {
-        data = 'down ' + state.cursorIndex
-        if (state.cursorIndex < height - 1) {
-          setCursorIndex(state.cursorIndex + 1)
-        }
+        setCursorAndScroll(cursorIndex + 1)
       }
       if (data === '\u001b[D') {
         data = 'left'
@@ -39,19 +30,31 @@ function ScrollableAsks ({ height, stdin, setRawMode }) {
       if (data === '\r') {
         data = 'return'
       }
-      globalState.lastKey = data
-      setUpdateTime(Date.now())
     }
-  }, [cursorIndex])
+
+    function setCursorAndScroll (newCursorIndex) {
+      if (newCursorIndex >= 0 && newCursorIndex <= dataLength - 1) {
+        setCursorIndex(newCursorIndex)
+        if (newCursorIndex < scrollTop) {
+          setScrollTop(newCursorIndex)
+        }
+        if (newCursorIndex > scrollTop + height - 1) {
+          setScrollTop(newCursorIndex - height + 1)
+        }
+        setUpdateTime(Date.now())
+      }
+    }
+  }, [cursorIndex, scrollTop])
 
   const rows = []
-  for (let i = 0; i < height; i++) {
-    const pointer = (i === cursorIndex) ? figures.pointer : ' ' 
-    rows.push(
-      <Box>{pointer} Row {i + 1} of {height}{' '}
-      LastKey {JSON.stringify(globalState.lastKey)}
-      </Box>
-    )
+  for (let i = 0; i < dataLength; i++) {
+    if (i >= scrollTop && i < scrollTop + height) {
+      const pointer = (i === cursorIndex) ? figures.pointer : ' '
+      rows.push(
+        <Box>{pointer} Row {i + 1} of {dataLength}{' '}
+        </Box>
+      )
+    }
   }
   return (
     <Box flexDirection="column">
