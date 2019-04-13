@@ -2,12 +2,12 @@
 
 import meow from 'meow'
 import React, { useState, useEffect } from 'react'
-import { render, Box } from 'ink'
-import BigText from 'ink-big-text'
+import { render, Box, Text } from 'ink'
 import useFilecoinConfig from './useFilecoinConfig'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
 import InkWatchForExitKey from './inkWatchForExitKey'
+import ScrollableAsks from './scrollableAsks'
 
 const cli = meow(
   `
@@ -126,7 +126,7 @@ const Main = () => {
 
   const seconds = args.seconds ?
     <Box>
-      {Math.floor((Date.now() - updateTime) / 1000)}s ago
+      ({Math.floor((Date.now() - updateTime) / 1000)}s ago)
     </Box>
     : null
 
@@ -136,20 +136,33 @@ const Main = () => {
     </Box>
     : null
 
+  const content = <ScrollableAsks height={rows - 6} />
+
   return (
     <Box flexDirection="column" width={columns} height={rows - 1}>
       <Box>
-        {args.nickname && nickname && nickname}
+        Filecoin Browse Asks
       </Box>
       <Box>
-        <BigText
-          text={`${height}`}
-          font={args.font}
-          colors={displayColors} />
+      <Text underline>S</Text>ort Order: Low to High (Press 'S' to Change)
+      </Box>
+      <Box textWrap="truncate">
+      {'-'.repeat(columns)}
+      </Box>
+      {content}
+      <Box textWrap="truncate">
+      {'-'.repeat(columns)}
       </Box>
       <Box>
-        <Box flexGrow={1}>{seconds}</Box>
-        <Box>{netInfo}</Box>
+        <Box>
+          {args.nickname && nickname && nickname + ' '}
+        </Box>
+        <Box flexGrow={1}>
+          {height} {seconds}
+        </Box>
+        <Box>
+          <Box>{netInfo}</Box>
+        </Box>
       </Box>
       <InkWatchForExitKey />
     </Box>
