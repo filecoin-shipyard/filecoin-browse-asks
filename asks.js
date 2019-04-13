@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text, StdinContext } from 'ink'
 import figures from 'figures'
 import BigNumber from 'bignumber.js'
-import useFilecoinAsks from './useFilecoinAsks'
 
 export default function Asks ({
   height,
   scrollTop,
   cursorIndex,
-  onDataLength
+  onDataLength,
+  asks
 }) {
-  const [asks] = useFilecoinAsks()
-
   useEffect(() => onDataLength(asks ? asks.length : 0), [asks])
 
   const rows = []
@@ -23,7 +21,7 @@ export default function Asks ({
         const pointer = (i === cursorIndex) ? figures.pointer : ' '
         rows.push(
           <Box textWrap="truncate">
-            {pointer} Row {i + 1} of {asks.length}{' '}{JSON.stringify(ask)}
+            {pointer} {i + 1} {ask.miner} {ask.id} {ask.price} {ask.expiry}
           </Box>
         )
       }

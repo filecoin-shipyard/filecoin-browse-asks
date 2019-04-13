@@ -6,6 +6,7 @@ import { render, Box, Text } from 'ink'
 import useFilecoinConfig from './useFilecoinConfig'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
+import useFilecoinAsks from './useFilecoinAsks'
 import InkWatchForExitKey from './inkWatchForExitKey'
 import Scrollable from './scrollable'
 import Asks from './asks'
@@ -115,6 +116,7 @@ const Main = () => {
   const [netName, , netHeight] = useFilecoinNetworkInfo({
     interval: netInterval
   })
+  const [asks] = useFilecoinAsks()
 
   const { columns, rows } = process.stdout
 
@@ -140,6 +142,7 @@ const Main = () => {
   const content = <Scrollable height={rows - 4} render={
     ({ height, scrollTop, cursorIndex, onDataLength }) => {
       return <Asks
+        asks={asks}
         height={height}
         scrollTop={scrollTop}
         cursorIndex={cursorIndex}
@@ -150,7 +153,12 @@ const Main = () => {
   return (
     <Box flexDirection="column" width={columns} height={rows - 1}>
       <Box>
-        Filecoin Browse Asks
+        <Box flexGrow={1}>
+          Filecoin Browse Asks
+        </Box>
+        <Box>
+          {asks && `${asks.length} asks`}
+        </Box>
       </Box>
       <Box>
         <Text underline>S</Text>ort Order: Low to High (Press 'S' to Change)
