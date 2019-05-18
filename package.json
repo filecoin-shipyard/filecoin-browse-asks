@@ -1,6 +1,6 @@
 {
   "name": "filecoin-browse-asks",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Scroll through Filecoin asks in your terminal",
   "scripts": {
     "dev": "nodemon --ignore dist --exec babel-node index.js",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@jimpick/use-filecoin-config": "^0.0.2",
     "@jimpick/use-filecoin-head": "^0.0.1",
+    "@jimpick/use-filecoin-network-info": "^0.0.1",
     "bignumber.js": "^8.1.1",
     "figures": "^2.0.0",
     "filecoin-api-client": "^0.2.0",
