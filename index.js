@@ -3,7 +3,7 @@
 import meow from 'meow'
 import React, { useState, useEffect } from 'react'
 import { render, Box, Color } from 'ink'
-import useFilecoinConfig from './useFilecoinConfig'
+import useFilecoinConfig from '@jimpick/use-filecoin-config'
 import useFilecoinHead from './useFilecoinHead'
 import useFilecoinNetworkInfo from './useFilecoinNetworkInfo'
 import useFilecoinAsks from './useFilecoinAsks'
