@@ -1,6 +1,6 @@
 {
   "name": "filecoin-browse-asks",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Scroll through Filecoin asks in your terminal",
   "scripts": {
     "dev": "nodemon --ignore dist --exec babel-node index.js",
@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "@jimpick/ink-watch-for-exit-key": "^0.0.1",
+    "@jimpick/use-filecoin-asks": "^0.0.1",
     "@jimpick/use-filecoin-config": "^0.0.2",
     "@jimpick/use-filecoin-head": "^0.0.1",
     "@jimpick/use-filecoin-network-info": "^0.0.1",
