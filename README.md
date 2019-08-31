@@ -1,7 +1,7 @@
 filecoin-browse-asks
 ====================
 
-A simple command line tool to view the availabe Filecoin asks
+A simple command line tool to view the available Filecoin asks
 on the network.
 
 ![Demo GIF](filecoin-browse-asks.gif)
@@ -25,5 +25,5 @@ npx filecoin-browse-asks
 
 # License
 
-MIT
+MIT/Apache-2 ([Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/))
 
